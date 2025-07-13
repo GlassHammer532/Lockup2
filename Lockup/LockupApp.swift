@@ -21,9 +21,9 @@ struct LockupApp: App {
                 }
 
                 ViewItemsView(itemsStore: itemsStore)
-                    .tabItem {
-                        Label("View", systemImage: "list.bullet.rectangle")
-                    }
+                .tabItem {
+                    Label("View", systemImage: "list.bullet.rectangle")
+                }
 
                 NavigationView {
                     SearchView(
@@ -40,6 +40,13 @@ struct LockupApp: App {
                 }
                 .tabItem {
                     Label("Spaces", systemImage: "cube.box")
+                }
+                
+                NavigationView {
+                    CategoryManagementView(categoryStore: categoryStore)
+                }
+                .tabItem {
+                    Label("Categories", systemImage: "tag.circle")
                 }
             }
         }
