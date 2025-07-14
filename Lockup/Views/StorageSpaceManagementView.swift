@@ -93,18 +93,18 @@ struct CreateStorageSpaceView: View {
                             .font(.caption)
                         
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: width), spacing: 2) {
-                            ForEach(0..<depth, id: \.self) { z in
-                                ForEach(0..<width, id: \.self) { x in
-                                    Rectangle()
-                                        .fill(color.opacity(0.3))
-                                        .frame(height: 20)
-                                        .overlay(
-                                            Text("[\(x),\(z)]")
-                                                .font(.caption2)
-                                        )
-                                }
+                            ForEach(0..<(width * depth), id: \.self) { index in
+                                Rectangle()
+                                    .fill(Color.blue.opacity(0.3))
+                                    .frame(height: 40)
+                                    .overlay(
+                                        Text("[\(index % width),\(index / width)]")
+                                            .font(.caption2)
+                                    )
                             }
                         }
+                        .id(depth) // Force recreation when depth changes
+
                     }
                 } header: {
                     Text("Preview")
