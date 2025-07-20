@@ -22,13 +22,14 @@ struct CreateItemView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Mandatory").font(.title2).bold()
+                // Section: Mandatory
+                Text("Mandatory")
+                    .font(.title2)
+                    .bold()
 
-                // Name Field
                 TextField("Name", text: $name)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                // Photo Picker with Vision suggestion
                 PhotosPicker(selection: $photoPickerItem, matching: .images, photoLibrary: .shared()) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
@@ -66,21 +67,27 @@ struct CreateItemView: View {
                 if isRecognizing {
                     HStack {
                         ProgressView()
-                        Text("Analyzing…").font(.caption).foregroundColor(.secondary)
+                        Text("Analyzing…")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
+
                 if let err = recognitionError {
-                    Text(err).font(.caption).foregroundColor(.red)
+                    Text(err)
+                        .font(.caption)
+                        .foregroundColor(.red)
                 }
 
-                // Storage Space Picker
                 VStack(alignment: .leading) {
                     Text("Storage Space").font(.headline)
                     Picker("Space", selection: $selectedStorageSpace) {
                         Text("Select Space").tag(StorageSpace?.none)
                         ForEach(storageSpaceStore.storageSpaces) { space in
                             HStack {
-                                Circle().fill(space.color).frame(width: 14, height: 14)
+                                Circle()
+                                    .fill(space.color)
+                                    .frame(width: 14, height: 14)
                                 Text(space.name)
                             }
                             .tag(Optional(space))
@@ -89,26 +96,30 @@ struct CreateItemView: View {
                     .pickerStyle(MenuPickerStyle())
                 }
 
-                // Position Picker
                 if let space = selectedStorageSpace {
                     DynamicPositionPicker(x: $x, y: $y, z: $z, storageSpace: space)
                 } else {
                     Text("Please select a storage space above.")
-                        .italic().foregroundColor(.secondary)
+                        .italic()
+                        .foregroundColor(.secondary)
                 }
 
                 Divider().padding(.vertical)
 
-                Text("Optional").font(.title2).bold()
+                Text("Optional")
+                    .font(.title2)
+                    .bold()
+
                 TextField("Description", text: $description)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
 
-                // Category Picker
                 Picker("Category", selection: $selectedCategory) {
                     Text("None").tag(Category?.none)
                     ForEach(categoryStore.categories) { cat in
                         HStack {
-                            Circle().fill(cat.color).frame(width: 14, height: 14)
+                            Circle()
+                                .fill(cat.color)
+                                .frame(width: 14, height: 14)
                             Text(cat.name)
                         }
                         .tag(Optional(cat))
@@ -116,7 +127,6 @@ struct CreateItemView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
 
-                // Create Button
                 Button("Create Item") {
                     guard !name.isEmpty, photoData != nil, let space = selectedStorageSpace else { return }
                     let item = StorageItem(
@@ -130,10 +140,13 @@ struct CreateItemView: View {
                         storageSpace: space
                     )
                     itemsStore.items.append(item)
-                    // Reset form:
-                    name = ""; photoData = nil
+
+                    // Reset form
+                    name = ""
+                    photoData = nil
                     x = 0; y = 0; z = 0
-                    description = ""; selectedCategory = nil
+                    description = ""
+                    selectedCategory = nil
                     selectedStorageSpace = nil
                 }
                 .disabled(name.isEmpty || photoData == nil || selectedStorageSpace == nil)
@@ -146,5 +159,28 @@ struct CreateItemView: View {
             .padding()
         }
         .navigationTitle("Create Item")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Text("Create Item")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+            }
+        }
+        .toolbarBackground(.visible, for: .navigationBar)
+        .onAppear {
+            if #available(iOS 18.0, *) {
+                setupNavigationBarForIOS18()
+            }
+        }
+    }
+
+    @available(iOS 18.0, *)
+    private func setupNavigationBarForIOS18() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithDefaultBackground()
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().prefersLargeTitles = false
     }
 }
