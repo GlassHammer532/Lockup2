@@ -6,60 +6,100 @@ struct ItemDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 24) {
                 
-                // Image or placeholder
+                // MARK: - Image or Placeholder
                 if let photoData = item.photoData, let uiImage = UIImage(data: photoData) {
                     Image(uiImage: uiImage)
                         .resizable()
-                        .scaledToFit()
-                        .frame(height: 120)
-                        .cornerRadius(8)
+                        .scaledToFill()
+                        .frame(height: 180)
+                        .clipped()
+                        .cornerRadius(12)
+                        .shadow(radius: 5)
                 } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(height: 120)
-                        .overlay(Text("No Photo").foregroundColor(.gray))
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.secondary.opacity(0.1))
+                        .frame(height: 180)
+                        .overlay(
+                            Text("No Photo")
+                                .foregroundColor(.secondary)
+                                .font(.subheadline)
+                        )
                 }
 
-                // Name
-                Text("Name: \(item.name)")
-                    .font(.headline)
+                Divider()
 
-                // Storage Space (non-optional)
-                HStack {
-                    Circle()
-                        .fill(item.storageSpace.color)
-                        .frame(width: 16, height: 16)
-                    Text("Storage Space: \(item.storageSpace.name)")
+                // MARK: - General Info
+                VStack(alignment: .leading, spacing: 8) {
+                    Label {
+                        Text(item.name)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    } icon: {
+                        Image(systemName: "cube.box.fill")
+                            .foregroundColor(.accentColor)
+                    }
+
+                    HStack(spacing: 10) {
+                        Circle()
+                            .fill(item.storageSpace.color)
+                            .frame(width: 14, height: 14)
+                        Text("Storage Location: \(item.storageSpace.name)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+
+                    Text("3D Position:  [\(item.positionX), \(item.positionY), \(item.positionZ)]")
                         .font(.subheadline)
-                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
                 }
-                .padding(.vertical, 4)
 
-                // 3D Position
-                Text("3D Position: [\(item.positionX), \(item.positionY), \(item.positionZ)]")
-
-                // Description
+                // MARK: - Description
                 if let desc = item.description, !desc.isEmpty {
-                    Text("Description: \(desc)")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Description")
+                            .font(.headline)
+                        Text(desc)
+                            .font(.body)
+                            .foregroundColor(.primary)
+                    }
                 }
 
-                // Categories
+                // MARK: - Categories List
                 if !item.categories.isEmpty {
-                    Text("Categories:")
-                    ForEach(item.categories) { category in
-                        HStack {
-                            Circle()
-                                .fill(category.color)
-                                .frame(width: 12, height: 12)
-                            Text(category.name)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Categories")
+                            .font(.headline)
+
+                        ForEach(item.categories) { category in
+                            CategoryLabelView(category: category)
                         }
                     }
                 }
             }
             .padding()
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .shadow(radius: 8)
+            .padding()
         }
         .navigationTitle(item.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct CategoryLabelView: View {
+    let category: Category
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle()
+                .fill(category.color)
+                .frame(width: 10, height: 10)
+            Text(category.name)
+                .font(.callout)
+        }
+        .padding(.vertical, 2)
     }
 }
