@@ -20,11 +20,15 @@ struct LockupApp: App {
                     Label("Create", systemImage: "plus.circle")
                 }
 
-                ViewItemsView(itemsStore: itemsStore)
+                // In your TabView, update the ViewItemsView tab to include all three stores:
+                ViewItemsView(
+                    itemsStore: itemsStore,
+                    categoryStore: categoryStore,
+                    storageSpaceStore: storageSpaceStore
+                )
                 .tabItem {
-                    Label("View", systemImage: "list.bullet.rectangle")
+                    Label("Statistics", systemImage: "chart.bar.fill")
                 }
-
                 NavigationView {
                     SearchView(
                         itemsStore: itemsStore,
